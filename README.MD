@@ -5,6 +5,11 @@ In order to spin up the project, in the root create .env with these two variable
 MONGO_URI
 JWT_SECRET
 
+Service used: 
+Express.js
+MongoDB
+Swagger
+
 After that run this command
 
 ```bash
