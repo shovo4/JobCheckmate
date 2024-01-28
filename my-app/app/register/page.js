@@ -1,4 +1,5 @@
 'use client'
+import axios from 'axios';
 import React, { useState } from 'react';
 import Head from 'next/head';
 
@@ -15,21 +16,37 @@ export default function Register() {
       alert("Passwords don't match!");
       return;
     }
+
+    const userData = {
+        name,
+        email,
+        password
+      };
+
     try {
-      const response = await fetch('http://localhost:5000/api/auth', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await response.json();
-      // Handle response data (e.g., show success message, redirect to login, etc.)
-      console.log(data);
-    } catch (error) {
-      // Handle errors (e.g., show error message to the user)
-      console.error('Error registering:', error);
+    const response = await axios.post('http://localhost:8080/api/auth/register', userData);
+    console.log(response.data);
+    // Redirect or show success message
+  } catch (error) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error(error.response.data);
+      // Show error message based on response data
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error(error.request);
+      // Show error message based on the request
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error('Error', error.message);
+      // Show error message based on the error message
     }
+  }
+
+    
+    
+  
   };
 
   return (

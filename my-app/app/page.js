@@ -9,7 +9,7 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
     try {
-      const response = await fetch('http://localhost:5000/api/auth', { 
+      const response = await fetch('http://localhost:8080/api/auth', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
