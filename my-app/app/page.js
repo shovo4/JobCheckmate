@@ -1,4 +1,5 @@
 'use client'
+import axios from 'axios';
 import React, { useState } from 'react';
 import Head from 'next/head';
 
@@ -9,21 +10,18 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
     try {
-      const response = await fetch('http://localhost:8080/api/auth', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      // Handle response data (e.g., save JWT, redirect user, etc.)
-      console.log(data);
+        const response = await axios.post('http://localhost:8080/api/auth/login', {
+            email,
+            password,
+        });
+        const data = response.data;
+        // Handle response data (e.g., save JWT, redirect user, etc.)
+        console.log(data);
     } catch (error) {
-      // Handle errors (e.g., show error message to the user)
-      console.error('Error logging in:', error);
+        // Handle errors (e.g., show error message to the user)
+        console.error('Error logging in:', error);
     }
-  };
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
