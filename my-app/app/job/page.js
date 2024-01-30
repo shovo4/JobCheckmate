@@ -6,6 +6,7 @@ import axios from 'axios';
 export default function Jobs() {
   const [company, setCompany] = useState('');
   const [position, setPosition] = useState('');
+  const [job,setJob] = useState([])
   const [jobs, setJobs] = useState([]); // This state will keep track of the jobs
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -13,13 +14,13 @@ export default function Jobs() {
   useEffect(() => {
     // Fetch jobs when the component mounts
     async function fetchJobs() {
-        console.log('start here111')
+       
         setLoading(true);
         try {
           // Retrieve the token from local storage or cookies
-          console.log('start here')
+         
           const token = localStorage.getItem('token'); // Replace 'authToken' with your token key
-          console.log(token)
+          console.log('tokenGet is',token);
   
           // Include the token in the Authorization header
           const response = await axios.get('http://localhost:8080/api/jobs', {
@@ -27,9 +28,9 @@ export default function Jobs() {
               Authorization: `Bearer ${token}`
             }
           });
-          setJobs(response.data);
-          console.log(jobs)
-          console.log(Array.isArray(jobs))
+          setJobs(response.data.jobs);
+        //   console.log(jobs)
+        //   console.log(Array.isArray(jobs))
         } catch (err) {
           setError('Failed to fetch jobs. Please make sure you are logged in.');
           console.error('Error fetching jobs:', err);
@@ -46,27 +47,33 @@ export default function Jobs() {
     e.preventDefault();
    
     try {
-      const response = await fetch('/api/jobs', { 
-        method: 'POST',
+        const token = localStorage.getItem('token');
+        console.log('token is',token);
+        const response = await axios.post('http://localhost:8080/api/jobs', 
+      { company, position }, // This is the payload (data)
+      { // This is the Axios config object
         headers: {
-          'Content-Type': 'application/json',
-       
-        },
-        body: JSON.stringify({ company, position }),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+          Authorization: `Bearer ${token}`
+        }
       }
-      const newJob = await response.json();
-    //   setJobs([...jobs, newJob]); // Add the new job to the local state
-    //   setCompany('');
-    //   setPosition('');
-    } catch (error) {
-      console.error('Error submitting new job:', error);
-    }
-  };
-  console.log('Current jobs:', jobs.jobs);
-  console.log('Number of jobs:', jobs.count);
+    );
+      
+          
+          setCompany('');
+          setPosition('');
+        } catch (error) {
+          console.error('Error submitting new job:', error);
+          if (error.response) {
+            // Handle specific error responses from the server
+            console.error('Server responded with status code:', error.response.status);
+          }
+        }
+      };
+      
+
+
+  console.log('Current jobs:', jobs);
+  console.log('Number of jobs:', jobs.length);
   return (
     <div className="min-h-screen bg-gray-100">
       <Head>
@@ -117,16 +124,18 @@ export default function Jobs() {
           </form>
         </div>
         <div className="mt-10 bg-white p-8 rounded-lg shadow-md">
-          {jobs.count === 0 ? (
-            <p className="text-center text-gray-700">You have no jobs to display</p>
-          ) : (
-            // <p>test</p>
+          {jobs.count != 0 ? (
             jobs.map((job, index) => (
-              <div key={index} className="border-b last:border-b-0 py-4">
-                <p className="text-lg font-bold">{job.company}</p>
-                <p className="text-sm">{job.position}</p>
-              </div>
-            ))
+                <div key={index} className="border-b last:border-b-0 py-4">
+                  <p className="text-lg font-bold">{job.company}</p>
+                  <p className="text-sm">{job.position}</p>
+                </div>
+              ))
+           
+          ) : (
+            <p className="text-center text-gray-700">You have no jobs to display</p>
+            // <p>test</p>
+            
           )}
         </div>
       </main>
