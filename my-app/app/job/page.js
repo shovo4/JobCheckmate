@@ -124,19 +124,35 @@ export default function Jobs() {
           </form>
         </div>
         <div className="mt-10 bg-white p-8 rounded-lg shadow-md">
-          {jobs.count != 0 ? (
-            jobs.map((job, index) => (
-                <div key={index} className="border-b last:border-b-0 py-4">
-                  <p className="text-lg font-bold">{job.company}</p>
-                  <p className="text-sm">{job.position}</p>
-                </div>
-              ))
-           
-          ) : (
-            <p className="text-center text-gray-700">You have no jobs to display</p>
-            // <p>test</p>
-            
-          )}
+        {jobs.length !== 0 ? (
+  jobs.map((job, index) => (
+    <div key={index} className="bg-white p-4 rounded-lg shadow-md mb-4 flex justify-between items-center">
+      <div>
+      <div className="p-2 rounded"> 
+      <p className="text-lg font-bold">{job.position}</p>
+      </div>
+      <div className="bg-gray-200 p-2 rounded"> 
+        <p className="text-lg font-bold">{job.company}</p>
+      </div>
+     
+      </div>
+      <div className="flex justify-center items-center">
+        <p className="text-xs bg-purple-200 text-purple-700 px-2 py-1 rounded-full">{new Date(job.updatedAt).toLocaleString('en-US', { 
+          dateStyle: 'medium', 
+          timeStyle: 'short' 
+        })}</p>
+        <p className="text-xs bg-yellow-200 text-yellow-700 px-2 py-1 rounded-full ml-2">{job.status}</p>
+      </div>
+      <div className="flex">
+        <button className="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+        <button className="text-red-600 hover:text-red-800">Delete</button>
+      </div>
+    </div>
+  ))
+) : (
+  <p className="text-center text-gray-700">You have no jobs to display</p>
+)}
+
         </div>
       </main>
     </div>
