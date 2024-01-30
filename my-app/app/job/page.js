@@ -1,22 +1,41 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
+import axios from 'axios';
 
 export default function Jobs() {
   const [company, setCompany] = useState('');
   const [position, setPosition] = useState('');
   const [jobs, setJobs] = useState([]); // This state will keep track of the jobs
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch jobs when the component mounts
-    const fetchJobs = async () => {
-      const response = await fetch('/api/jobs'); 
-      const data = await response.json();
-      setJobs(data);
-    };
-
-    fetchJobs().catch(console.error);
-  }, []);
+    async function fetchJobs() {
+        setLoading(true);
+        try {
+          // Retrieve the token from local storage or cookies
+          const token = localStorage.getItem('authToken'); // Replace 'authToken' with your token key
+  
+          // Include the token in the Authorization header
+          const response = await axios.get('http://localhost:8080/api/jobs', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          setJobs(response.data);
+        } catch (err) {
+          setError('Failed to fetch jobs. Please make sure you are logged in.');
+          console.error('Error fetching jobs:', err);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchJobs();
+    }, []);
+  
 
   const handleJobSubmit = async (e) => {
     e.preventDefault();

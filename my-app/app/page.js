@@ -2,10 +2,14 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/navigation';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
+
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
@@ -17,6 +21,7 @@ export default function Login() {
         const data = response.data;
         // Handle response data (e.g., save JWT, redirect user, etc.)
         console.log(data);
+        router.push('/job')
     } catch (error) {
         // Handle errors (e.g., show error message to the user)
         console.error('Error logging in:', error);
