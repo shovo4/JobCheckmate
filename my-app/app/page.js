@@ -20,13 +20,23 @@ export default function Login() {
         });
         const data = response.data;
         // Handle response data (e.g., save JWT, redirect user, etc.)
-        console.log(data);
-        router.push('/job')
-    } catch (error) {
-        // Handle errors (e.g., show error message to the user)
-        console.error('Error logging in:', error);
-    }
-};
+        console.log('data is',data);
+        if (data && data.token) {
+          // Save token to localStorage or handle it however you need
+          localStorage.setItem('token', data.token);
+          
+          // Additional user info could be stored in localStorage if necessary
+          // localStorage.setItem('user', JSON.stringify(data.user));
+    
+          // Redirect to /job
+          router.push('/job');
+        } else {
+          console.log('No token received');
+        }
+      } catch (error) {
+        console.error('Login failed', error);
+      }
+    };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

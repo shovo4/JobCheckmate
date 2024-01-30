@@ -13,10 +13,13 @@ export default function Jobs() {
   useEffect(() => {
     // Fetch jobs when the component mounts
     async function fetchJobs() {
+        console.log('start here111')
         setLoading(true);
         try {
           // Retrieve the token from local storage or cookies
-          const token = localStorage.getItem('authToken'); // Replace 'authToken' with your token key
+          console.log('start here')
+          const token = localStorage.getItem('token'); // Replace 'authToken' with your token key
+          console.log(token)
   
           // Include the token in the Authorization header
           const response = await axios.get('http://localhost:8080/api/jobs', {
@@ -25,6 +28,8 @@ export default function Jobs() {
             }
           });
           setJobs(response.data);
+          console.log(jobs)
+          console.log(Array.isArray(jobs))
         } catch (err) {
           setError('Failed to fetch jobs. Please make sure you are logged in.');
           console.error('Error fetching jobs:', err);
@@ -53,14 +58,15 @@ export default function Jobs() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const newJob = await response.json();
-      setJobs([...jobs, newJob]); // Add the new job to the local state
-      setCompany('');
-      setPosition('');
+    //   setJobs([...jobs, newJob]); // Add the new job to the local state
+    //   setCompany('');
+    //   setPosition('');
     } catch (error) {
       console.error('Error submitting new job:', error);
     }
   };
-
+  console.log('Current jobs:', jobs.jobs);
+  console.log('Number of jobs:', jobs.count);
   return (
     <div className="min-h-screen bg-gray-100">
       <Head>
@@ -111,10 +117,10 @@ export default function Jobs() {
           </form>
         </div>
         <div className="mt-10 bg-white p-8 rounded-lg shadow-md">
-          {jobs.length === 0 ? (
+          {jobs.count === 0 ? (
             <p className="text-center text-gray-700">You have no jobs to display</p>
           ) : (
-       
+            // <p>test</p>
             jobs.map((job, index) => (
               <div key={index} className="border-b last:border-b-0 py-4">
                 <p className="text-lg font-bold">{job.company}</p>
