@@ -58,7 +58,10 @@ export default function Jobs() {
       }
     );
       
-          
+          console.log("r",response.data.job)
+          const newJob = response.data.job;
+         setJobs(currentJobs => [...currentJobs, newJob]); // Append new job to the current list
+
           setCompany('');
           setPosition('');
         } catch (error) {
@@ -69,6 +72,30 @@ export default function Jobs() {
           }
         }
       };
+
+      const handleDelete = async (jobId) => {
+        try {
+          const token = localStorage.getItem('token');
+          const url = `http://localhost:8080/api/jobs/${jobId}`;
+          console.log('Attempting to delete job with URL:', url); // Debug: Check the constructed URL
+      
+          await axios.delete(url, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+      
+          // If this line is reached, deletion was successful
+          setJobs(currentJobs => currentJobs.filter(job => job.id !== jobId));
+        } catch (error) {
+          console.error('Error deleting job:', error);
+          if (error.response) {
+            console.error('Server responded with status code:', error.response.status);
+          }
+        }
+      };
+      
+      
       
 
 
@@ -145,7 +172,7 @@ export default function Jobs() {
       </div>
       <div className="flex">
         <button className="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
-        <button className="text-red-600 hover:text-red-800">Delete</button>
+        <button className="text-red-600 hover:text-red-800" onClick={() => handleDelete(job._id)}>Delete</button>
       </div>
     </div>
   ))
