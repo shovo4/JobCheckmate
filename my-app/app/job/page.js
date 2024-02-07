@@ -12,7 +12,7 @@ export default function Jobs() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [deleteMessage, setDeleteMessage] = useState('');
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [modalMode, setModalMode] = useState({isVisible: false, isEdit: false});
   const [currentEditingJob, setCurrentEditingJob] = useState(null);
   
 
@@ -47,7 +47,11 @@ export default function Jobs() {
       fetchJobs();
     }, []);
   
-
+ const closeAndResetModal = () => {
+        setModalMode({isVisible: false, isEdit: false}); // Adjusted based on the modalMode state structure
+        setCurrentEditingJob(null);
+      };
+      
   const handleJobSubmit = async (e) => {
     e.preventDefault();
    
@@ -69,6 +73,7 @@ export default function Jobs() {
 
           setCompany('');
           setPosition('');
+          closeAndResetModal();
         } catch (error) {
           console.error('Error submitting new job:', error);
           if (error.response) {
@@ -115,11 +120,16 @@ export default function Jobs() {
           console.log('Job deletion canceled by the user.');
         }
       };
-
-      const handleEditClick = (job) => {
+      const handleAddClick = () => {
+        setCurrentEditingJob({company: '', position: '', status: ''}); // Reset or provide defaults
+        setModalMode({isVisible: true, isEdit: false});
+    };
+    
+   
+    const handleEditClick = (job) => {
         setCurrentEditingJob(job);
-        setIsEditModalVisible(true);
-      };
+        setModalMode({isVisible: true, isEdit: true});
+    };
 
       const handleEditSubmit = async (e) => {
         e.preventDefault();
@@ -141,8 +151,9 @@ export default function Jobs() {
       
           // Update the jobs list with the updated job
           setJobs(jobs.map(job => job._id === currentEditingJob._id ? response.data.job : job));
-          setIsEditModalVisible(false); // Close the modal
-          setCurrentEditingJob(null); // Reset current editing job
+        //   setIsEditModalVisible(false); // Close the modal
+        //   setCurrentEditingJob(null); // Reset current editing job
+        closeAndResetModal();
         } catch (error) {
             console.error('Error updating job:', error);
             if (error.response) {
@@ -172,72 +183,85 @@ export default function Jobs() {
       </header>
       <main className="container mx-auto mt-10">
         <div className="bg-white p-8 rounded-lg shadow-md">
+        <button
+            onClick={handleAddClick}
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+            Add New Job
+        </button>
         {
-            isEditModalVisible && (
+            modalMode.isVisible && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal">
                 <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                    <h2 className="text-2xl font-bold text-center mb-8">Edit Job</h2>
-                    <form onSubmit={handleEditSubmit}>
+                    <h2 className="text-2xl font-bold text-center mb-8">{modalMode.isEdit ? 'Edit Job' : 'Add New Job'}</h2>
+                    <form onSubmit={modalMode.isEdit ? handleEditSubmit : handleJobSubmit}>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-company">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-company">
                         Company
                         </label>
                         <input
-                        className="shadow appearance-none border hover:border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="edit-company"
-                        type="text"
-                        placeholder="Company"
-                        value={currentEditingJob?.company || ''}
-                        onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, company: e.target.value })}
+                            className="shadow appearance-none border hover:border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="edit-company"
+                            type="text"
+                            placeholder="Company"
+                            value={modalMode.isEdit ? currentEditingJob?.company || '' : company}
+                            onChange={(e) => 
+                                modalMode.isEdit ? 
+                                setCurrentEditingJob({ ...currentEditingJob, company: e.target.value }) :
+                                setCompany(e.target.value)
+                            }
                         />
                     </div>
                     <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-position">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-position">
                         Position
                         </label>
                         <input
-                        className="shadow appearance-none border hover:border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="edit-position"
-                        type="text"
-                        placeholder="Position"
-                        value={currentEditingJob?.position || ''}
-                        onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, position: e.target.value })}
+                            className="shadow appearance-none border hover:border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="edit-position"
+                            type="text"
+                            placeholder="Position"
+                            value={modalMode.isEdit ? currentEditingJob?.position || '' : position}
+                            onChange={(e) => 
+                                modalMode.isEdit ? 
+                                setCurrentEditingJob({ ...currentEditingJob, position: e.target.value }) :
+                                setPosition(e.target.value)
+                            }
                         />
                     </div>
-                    <div className="mb-6 relative">
-                        <label htmlFor="edit-status" className="block text-gray-700 text-sm font-bold mb-2">
-                            Status
-                        </label>
+                    {modalMode.isEdit && (
+                        <div className="mb-6">
+                           <label htmlFor="edit-status" className="block text-gray-700 text-sm font-bold mb-2">
+                                Status
+                            </label>
                        
-                        <div className="relative "> 
-                            <select
-                                className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                                id="edit-status"
-                                value={currentEditingJob?.status || ''}
-                                onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, status: e.target.value })}
-                            >
-                                <option disabled value="">Select a status</option>
-                                <option value="interview">Interview</option>
-                                <option value="declined">Declined</option>
-                                <option value="pending">Pending</option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-2 right-0 flex items-center px-2 text-blue-700 hover:text-red-300">
-                                <svg className="fill-current h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            <div className="relative "> 
+                                <select
+                                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                                    id="edit-status"
+                                    value={currentEditingJob?.status || ''}
+                                    onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, status: e.target.value })}
+                                >
+                                    <option disabled value="">Select a status</option>
+                                    <option value="interview">Interview</option>
+                                    <option value="declined">Declined</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-2 right-0 flex items-center px-2 text-blue-700 hover:text-red-300">
+                                    <svg className="fill-current h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                </div>
                             </div>
                         </div>
-
-                    </div>
-
-
+                    )}
                     <div className="flex justify-center">
                         <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
                         >
-                        Save Changes
+                        {modalMode.isEdit ? 'Save Changes' : 'Add Job'}
                         </button>
                         <button
-                        onClick={() => setIsEditModalVisible(false)}
+                        onClick={() => setModalMode({isVisible: false, isEdit: false})}
                         className="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="button"
                         >
@@ -250,51 +274,14 @@ export default function Jobs() {
             )
         }
 
-
-          <h2 className="text-2xl font-bold text-center mb-8">New Job</h2>
-          <form onSubmit={handleJobSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="company">
-                Company
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="company"
-                type="text"
-                placeholder="Company"
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="position">
-                Position
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="position"
-                type="text"
-                placeholder="Position"
-                value={position}
-                onChange={(e) => setPosition(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-center">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="submit"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div>
+    </div>
+        
         <div className="mt-10 bg-white p-8 rounded-lg shadow-md">
-        {deleteMessage && (
-      <div className="text-center my-4 text-red-500">
-        {deleteMessage}
-      </div>
-    )}
+            {deleteMessage && (
+                <div className="text-center my-4 text-red-500">
+                    {deleteMessage}
+                </div>
+            )}
         {jobs.length !== 0 ? (
             jobs.map((job, index) => (
                 <div key={index} className="bg-white p-4 rounded-lg shadow-md mb-4 flex justify-between items-center">
