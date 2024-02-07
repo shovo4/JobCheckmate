@@ -124,7 +124,13 @@ export default function Jobs() {
       const handleEditSubmit = async (e) => {
         e.preventDefault();
         if (!currentEditingJob) return;
-      
+        const updatedData = {
+            company: currentEditingJob.company,
+            position: currentEditingJob.position,
+            status: currentEditingJob.status,
+          };
+        
+          console.log('Sending update data:', updatedData); 
         try {
           const token = localStorage.getItem('token');
           const response = await axios.patch(`http://localhost:8080/api/jobs/${currentEditingJob._id}`, currentEditingJob, {
@@ -193,6 +199,19 @@ export default function Jobs() {
                         placeholder="Position"
                         value={currentEditingJob?.position || ''}
                         onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, position: e.target.value })}
+                        />
+                    </div>
+                    <div className="mb-6">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-status">
+                        Status
+                        </label>
+                        <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="edit-status"
+                        type="text"
+                        placeholder="Status"
+                        value={currentEditingJob?.status || ''}
+                        onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, status: e.target.value })}
                         />
                     </div>
                     <div className="flex justify-center">
