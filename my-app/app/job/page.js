@@ -144,9 +144,12 @@ export default function Jobs() {
           setIsEditModalVisible(false); // Close the modal
           setCurrentEditingJob(null); // Reset current editing job
         } catch (error) {
-          console.error('Error updating job:', error);
-          // Optionally, handle errors (e.g., display error message)
-        }
+            console.error('Error updating job:', error);
+            if (error.response) {
+              console.error('Server responded with status code:', error.response.status);
+              console.error('Error details:', error.response.data); // Log more detailed error info
+            }
+          }
       };
       
       
@@ -180,7 +183,7 @@ export default function Jobs() {
                         Company
                         </label>
                         <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border hover:border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="edit-company"
                         type="text"
                         placeholder="Company"
@@ -193,7 +196,7 @@ export default function Jobs() {
                         Position
                         </label>
                         <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border hover:border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="edit-position"
                         type="text"
                         placeholder="Position"
@@ -201,19 +204,31 @@ export default function Jobs() {
                         onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, position: e.target.value })}
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-status">
-                        Status
+                    <div className="mb-6 relative">
+                        <label htmlFor="edit-status" className="block text-gray-700 text-sm font-bold mb-2">
+                            Status
                         </label>
-                        <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="edit-status"
-                        type="text"
-                        placeholder="Status"
-                        value={currentEditingJob?.status || ''}
-                        onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, status: e.target.value })}
-                        />
+                       
+                        <div className="relative "> 
+                            <select
+                                className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                                id="edit-status"
+                                value={currentEditingJob?.status || ''}
+                                onChange={(e) => setCurrentEditingJob({ ...currentEditingJob, status: e.target.value })}
+                            >
+                                <option disabled value="">Select a status</option>
+                                <option value="interview">Interview</option>
+                                <option value="declined">Declined</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-2 right-0 flex items-center px-2 text-blue-700 hover:text-red-300">
+                                <svg className="fill-current h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
+
                     </div>
+
+
                     <div className="flex justify-center">
                         <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -297,7 +312,11 @@ export default function Jobs() {
                     dateStyle: 'medium', 
                     timeStyle: 'short' 
                     })}</p>
-                    <p className="text-xs bg-yellow-200 text-yellow-700 px-2 py-1 rounded-full ml-2">{job.status}</p>
+                   <p className={`text-xs px-2 py-1 rounded-full ml-2 ${
+                        job.status === 'pending' ? 'bg-yellow-200 text-yellow-700' :
+                        job.status === 'declined' ? 'bg-red-200 text-red-700' :
+                        job.status === 'interview' ? 'bg-green-200 text-green-700' :
+                        '' }`}>{job.status}</p>
                 </div>
                 <div className="flex">
                     <button className="text-blue-600 hover:text-blue-800 mr-2" onClick={() => handleEditClick(job)}>Edit</button>
