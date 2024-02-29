@@ -22,7 +22,7 @@ export default function Login() {
       const data = response.data;
       if (data && data.token) {
         localStorage.setItem('token', data.token);
-        router.push('/job');
+        router.push('/dashboard');
       } else {
         console.log('No token received');
       }
@@ -37,10 +37,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <Head>
-        <title>Login</title>
+        <title>Login - Job Check Mate</title>
       </Head>
+      <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold italic text-black">Job Check Mate</h1>
+      </div>
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-bold text-center mb-8">Login</h2>
         <form onSubmit={handleSubmit}>

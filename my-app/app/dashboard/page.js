@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
+import logout from '../../utilities/logout';
 
 export default function Jobs() {
   const [company, setCompany] = useState('');
@@ -177,12 +178,23 @@ export default function Jobs() {
       <Head>
         <title>Job Application Tracker</title>
       </Head>
-      <header className="flex justify-between items-center p-6 bg-white shadow-md">
-        <h1 className="text-lg font-bold">Hello</h1>
-        <button className="text-blue-600 hover:text-blue-800">Logout</button>
-      </header>
+  <header className="bg-white shadow-md">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10">
+            <div className="flex justify-start lg:w-0 lg:flex-1">
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Job Check Mate</h1>
+            </div>
+            <div className="md:flex items-center justify-end md:flex-1 lg:w-0">
+                <button onClick={logout} className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+  </header>
+
       <main className="container mx-auto mt-10">
-        <div className="bg-white p-8 rounded-lg shadow-md">
+      <div className="flex justify-center mb-6">
         <button
             onClick={handleAddClick}
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
