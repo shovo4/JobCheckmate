@@ -54,6 +54,57 @@ paths:
           headers: {}
       deprecated: false
       security: []
+  /auth/profile/{id}:
+    get:
+      tags:
+        - Auth
+      summary: Get User Profile by ID
+      operationId: GetUserProfile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+  
+  /auth/allUsers:
+    get:
+      tags:
+        - Auth
+      summary: Get All Users
+      operationId: GetAllUsers
+      responses:
+        '200':
+          description: List of all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfileResponse'
+  
+  /auth/delete/{email}:
+    delete:
+      tags:
+        - Auth
+      summary: Delete User by Email
+      operationId: DeleteUserByEmail
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deleted successfully
   /jobs:
     post:
       tags:
@@ -173,6 +224,25 @@ components:
       example:
         email: susan@gmail.com
         password: secret
+        
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        token:
+          type: string
+  
+    UserProfileResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
     CreateJobRequest:
       title: CreateJobRequest
       required:
