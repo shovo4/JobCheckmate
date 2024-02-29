@@ -116,7 +116,7 @@ export default function Register() {
             >
               Register
             </button>
-            <a href="/login" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+            <a href="/" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
               Already have an account? Login
             </a>
           </div>
