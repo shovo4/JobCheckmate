@@ -8,35 +8,33 @@ import { useRouter } from 'next/navigation';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
-
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
+    setErrorMessage(''); // Reset error message on new submission
     try {
-        const response = await axios.post('http://localhost:8080/api/auth/login', {
-            email,
-            password,
-        });
-        const data = response.data;
-        // Handle response data (e.g., save JWT, redirect user, etc.)
-        console.log('data is',data);
-        if (data && data.token) {
-          // Save token to localStorage or handle it however you need
-          localStorage.setItem('token', data.token);
-          
-          // Additional user info could be stored in localStorage if necessary
-          // localStorage.setItem('user', JSON.stringify(data.user));
-    
-          // Redirect to /job
-          router.push('/job');
-        } else {
-          console.log('No token received');
-        }
-      } catch (error) {
-        console.error('Login failed', error);
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        email,
+        password,
+      });
+      const data = response.data;
+      if (data && data.token) {
+        localStorage.setItem('token', data.token);
+        router.push('/job');
+      } else {
+        console.log('No token received');
       }
-    };
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        setErrorMessage('Invalid email or password.');
+      } else {
+        setErrorMessage('An error occurred. Please try again later.');
+      }
+      console.error('Login failed', error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -46,6 +44,8 @@ export default function Login() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-bold text-center mb-8">Login</h2>
         <form onSubmit={handleSubmit}>
+
+          
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               Email
@@ -83,6 +83,11 @@ export default function Login() {
               Not a member yet? Register
             </a>
           </div>
+          {errorMessage && (
+            <div className="mb-4">
+              <p className="text-red-500 text-xs italic">{errorMessage}</p>
+            </div>
+          )}
         </form>
       </div>
     </div>
