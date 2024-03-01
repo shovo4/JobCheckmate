@@ -99,6 +99,8 @@ The backend provides several RESTful endpoints:
 For more details on API endpoints and their usage, please refer to the Swagger documentation available at `/api-docs` once the server is running.
 
 ## Screenshots
+![Documentation](Screenshot%202024-03-01%20at%201.15.57%20PM.png)
+https://github.com/shovo4/JobCheckmate/blob/main/Screenshot%202024-03-01%20at%201.15.57%20PM.png 
 
 
 
