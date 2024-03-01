@@ -100,8 +100,8 @@ For more details on API endpoints and their usage, please refer to the Swagger d
 
 ## Screenshots
 ![Documentation](Screenshot%202024-03-01%20at%201.15.57%20PM.png)
-https://github.com/shovo4/JobCheckmate/blob/main/Screenshot%202024-03-01%20at%201.15.57%20PM.png 
-
+![LogIn Screen](Screenshot%202024-03-01%20at%201.16.25%20PM.png)
+![Dashboard](Screenshot%202024-03-01%20at%201.17.53%20PM.png)
 
 
 ## Contributors
